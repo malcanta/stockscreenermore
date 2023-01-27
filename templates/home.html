@@ -1,0 +1,271 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<script>
+  $(document).ready(function() {
+    $("#add_stocks").click(function() {
+      $('.ui.modal').modal('show');
+    })
+
+    $("#save").click(function() {
+      var symbols = $("#symbols").val();
+
+      console.log(symbols);
+
+      var stockSymbols = symbols.split("\n");
+
+      console.log(stockSymbols)
+
+      for (var i = 0; i < stockSymbols.length; ++i) {
+        console.log(stockSymbols[i]);
+
+        $.ajax({
+          url: '/stock',
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({"symbol": stockSymbols[i]}),
+          dataType: 'json'
+        })
+      }
+
+      $('.ui.modal').modal('hide');
+
+    })
+  });
+
+  function sortTable(n) {
+    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+    table = document.getElementById("myTable2");
+    switching = true;
+    // Set the sorting direction to ascending:
+    dir = "asc";
+    /* Make a loop that will continue until
+    no switching has been done: */
+    while (switching) {
+      // Start by saying: no switching is done:
+      switching = false;
+      rows = table.rows;
+      /* Loop through all table rows (except the
+      first, which contains table headers): */
+      for (i = 1; i < (rows.length - 1); i++) {
+        // Start by saying there should be no switching:
+        shouldSwitch = false;
+        /* Get the two elements you want to compare,
+        one from current row and one from the next: */
+        x = rows[i].getElementsByTagName("TD")[n];
+        y = rows[i + 1].getElementsByTagName("TD")[n];
+        /* Check if the two rows should switch place,
+        based on the direction, asc or desc: */
+        if (dir == "asc") {
+          if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+            // If so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+          }
+        } else if (dir == "desc") {
+          if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+            // If so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+          }
+        }
+      }
+      if (shouldSwitch) {
+        /* If a switch has been marked, make the switch
+        and mark that a switch has been done: */
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+        // Each time a switch is done, increase this count by 1:
+        switchcount ++;
+      } else {
+        /* If no switching has been done AND the direction is "asc",
+        set the direction to "desc" and run the while loop again. */
+        if (switchcount == 0 && dir == "asc") {
+          dir = "desc";
+          switching = true;
+        }
+      }
+    }
+  }
+
+  function sortnum(n) {
+    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+    table = document.getElementById("myTable2");
+    switching = true;
+    /*Make a loop that will continue until no switching has been done:*/
+    dir = "asc";
+    while (switching) {
+      //start by saying: no switching is done:
+      switching = false;
+      rows = table.rows;
+      /*Loop through all table rows (except the
+      first, which contains table headers):*/
+      for (i = 1; i < (rows.length - 1); i++) {
+        //start by saying there should be no switching:
+        shouldSwitch = false;
+        /*Get the two elements you want to compare,
+        one from current row and one from the next:*/
+        x = rows[i].getElementsByTagName("TD")[n];
+        y = rows[i + 1].getElementsByTagName("TD")[n];
+
+        if (x.innterHTML == "None") {
+          x = 0
+        }
+        if (y.innterHTML == "None") {
+          y = 0
+        }
+        //check if the two rows should switch place:
+        if (dir == "asc") {
+          if (Number(x.innerHTML) > Number(y.innerHTML)) {
+            //if so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+          }
+          //if (Number(x.innterHTML) == "None") {
+          //  shouldSwitch = true;
+          //  break;
+          //}
+        } else if (dir == "desc") {
+          if (Number(x.innerHTML) < Number(y.innerHTML)) {
+            shouldSwitch = true;
+            break;
+          }
+          //if (Number(x.innterHTML) == "None") {
+          //  shouldSwitch = true;
+          //  break;
+          //}
+        }
+      }
+
+      if (shouldSwitch) {
+        /*If a switch has been marked, make the switch
+        and mark that a switch has been done:*/
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+        switchcount ++;
+      } else {
+        if (switchcount == 0 && dir == "asc") {
+          dir = "desc";
+          switching = true;
+        }
+      }
+    }
+  }
+
+  function roundNumber(num, places) {
+    return Math.round(num * Math.pow(10, places)) / Math.pow(10, places);
+  }
+
+</script>
+
+<form>
+
+<div class="ui input">
+  <input id="forward_pe_txt" name="forward_pe" type="text" placeholder="P/E Ratio" value="{{ forward_pe or '' }}">
+</div>
+
+<div class="ui input">
+  <input name="dividend_yield" type="text" placeholder="Dividend Yield" value="{{ dividend_yield or '' }}">
+</div>
+
+<div class="ui checkbox">
+  <input name="ma50" type="checkbox" name="example" {% if ma50 %}checked="checked"{% endif %}>
+  <label>Above 50 Day MA</label>
+</div>
+
+<div class="ui checkbox">
+  <input name="ma200" type="checkbox" name="example" {% if ma200 %}checked="checked"{% endif %}>
+  <label>Above 200 Day MA</label>
+</div>
+
+<div class="ui checkbox">
+  <input name="below_20"" type="checkbox" name="example" {% if below_20 %}checked="checked"{% endif %}>
+  <label>Below 20% From High</label>
+</div>
+
+<div class="ui checkbox">
+  <input name="short_high"" type="checkbox" name="example" {% if short_high %}checked="checked"{% endif %}>
+  <label>Above 2% Short Ratio</label>
+</div>
+
+<div class="ui checkbox">
+  <input name="bma50" type="checkbox" name="example" {% if bma50 %}checked="checked"{% endif %}>
+  <label>Below 50 Day MA</label>
+</div>
+
+<div class="ui checkbox">
+  <input name="bma200" type="checkbox" name="example" {% if bma200 %}checked="checked"{% endif %}>
+  <label>Below 200 Day MA</label>
+</div>
+
+<button type="submit" class="ui button primary">
+  Filter
+</button>
+
+</form>
+
+<div>
+  <button id="add_stocks" class="ui button">
+    Add Stocks
+  </button>
+</div>
+
+
+<div>
+  <button onclick="document.getElementById('forward_pe_txt').value = ''" id="clear" class="ui button">
+    Clear
+  </button>
+</div>
+
+<table id="myTable2" class="ui celled table">
+  <thead>
+    <tr>
+      <th onclick="sortTable(0)">Symbol</th>
+      <th onclick="sortnum(1)">Price</th>
+      <th onclick="sortnum(2)">Forward P/E</th>
+      <th onclick="sortnum(3)">Forward EPS</th>
+      <th onclick="sortnum(4)">Dividend Yield</th>
+      <th onclick="sortnum(5)">52 Week High</th>
+      <th onclick="sortnum(6)">Short Ratio</th>
+      <th onclick="sortnum(7)">% Decrease from 52 Week High</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for stock in stocks %}
+    <tr>
+      <td>{{ stock.symbol }}</td>
+      <td>{{ stock.price }}</td>
+      <td>{{ stock.forward_pe }}</td>
+      <td>{{ stock.forward_eps }}</td>
+      <td>{{ stock.dividend_yield }}</td>
+      <td>{{ stock.year_high }}</td>
+      <td>{{ stock.short_ratio }}</td>
+      <td>{{ stock.percent_decrease }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div class="ui modal">
+  <i class="close icon"></i>
+  <div class="header">
+    Add Stock Symbol
+  </div>
+  <div class="content">
+    <div class="ui form">
+      <div class="field">
+        <label>Enter Stock Symbol</label>
+        <textarea id="symbols"></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="actions">
+    <div id="save" class="ui positive right labeled icon button">
+      Add Symbols
+      <i class="plus icon"></i>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
