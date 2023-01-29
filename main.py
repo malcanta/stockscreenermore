@@ -74,9 +74,9 @@ def fetch_stock_data(id: int):
 
     yahoo_data = yfinance.Ticker(stock.symbol)
 
-    stock.ma200 = yahoo_data.info['twoHundredDayAverage']
-    stock.ma50 = yahoo_data.info['fiftyDayAverage']
-    stock.price = yahoo_data.info['previousClose']
+    stock.ma200 = yahoo_data.fast_info['two_hundred_day_average']
+    stock.ma50 = yahoo_data.fast_info['fifty_day_average']
+    stock.price = yahoo_data.fast_info['previous_close']
     stock.forward_pe = yahoo_data.info['forwardPE']
     stock.forward_eps = yahoo_data.info['forwardEps']
     if yahoo_data.info['dividendYield'] is None:
@@ -85,7 +85,7 @@ def fetch_stock_data(id: int):
         stock.dividend_yield = yahoo_data.info['dividendYield'] * 100
     #if yahoo_data.info['fiveYearAverageReturn'] is not None:
         #stock.five_year_return = yahoo_data.info['fiveYearAverageReturn']
-    stock.year_high = yahoo_data.info['fiftyTwoWeekHigh']
+    stock.year_high = yahoo_data.fast_info['year_high']
     stock.short_ratio = yahoo_data.info['shortRatio']
     stock.percent_decrease = ((stock.year_high - stock.price) / stock.year_high) * 100
 
