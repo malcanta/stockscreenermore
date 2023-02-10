@@ -1,0 +1,20 @@
+after getting all 500 (503?) tickers of sp500, tried following:
+	-Added all of them at once to the webpage. There were a lot of failures and it ended up only grabbing 171 out of the 503 that were pasted.
+	-Then tried 10 adds of 50 each, and this was able to get all of them into the database, there were a few "no grabs" with empty data, theses were the following:
+		-59 AVY
+		-69 CNP
+		-84 BRK.B
+		-99 BF.B
+		-260 ISRG
+		-351 NXPI
+		-402 ROL
+		-470 ZION
+
+Only 8 emtpy entries, which is pretty good.
+I should also add the order the tickers were inputted do not match with the order they are written to the database, which is a little strange.I guess the timing of the requests can differ, especially if they are all requested at once asynchronously. should try removing the 8 that failed and see if the data can be grabbed at all. pretty sure won't try lines 84 and 99 as the period is probably what is causing the failure.
+
+Just removed ZION and tried adding it back again. Looks like it was successful this time and retrieved the correct data. could do this for the others now and see what happens.
+Tried adding back in BRK.B and theory proved correct, failed again.
+Just added back in the other 5 and all requests were successful. now have 501 (out of 503) top S&P500 stocks in the database. Wonderful.
+For the future. Obviously this is just a snapshot for right now, so if wanting to update all the data again, will need to remove all stocks and add them back in. Since there were 6 failures when adding batches of 50, I reccommend adding 25 at a time (sans BRK.B and BF.B) to ensure successful requests for all tickers. This will roughly take 5-10 minutes when doing manually, is aldo prone to human error with copying and pasting
+Should also note when running any of the 'sorting' algorithms in the tabs, with 500 entries it actually slows down considerably when trying any of them (will actually get a little note from Firefox saying that the page is running slow), so use them sparingly, or if click one, wait until it comples otherwise it will stack them. for reference, it took at least 40 seconds to reverse the order of 'decrease from 52 week high'. This is probably the longest it will take to sort like this from the worst case scenario when everything needs to flip.
